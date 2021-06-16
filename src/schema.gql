@@ -1,0 +1,51 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Argument {
+  command: Command!
+  id: ID!
+  multi: Boolean!
+  name: String!
+  optional: Boolean!
+}
+
+type Command {
+  aliases: [String!]
+  args: [Argument!]
+  category: CommandCategory!
+  description: String!
+  id: ID!
+  name: String!
+}
+
+enum CommandCategory {
+  CURRENCY
+  FUN
+  GAMES
+  MUSIC
+  UTILITY
+}
+
+input CreateArgumentInput {
+  multi: Boolean!
+  name: String!
+  optional: Boolean!
+}
+
+input CreateCommandInput {
+  aliases: [String!]
+  args: [CreateArgumentInput!]
+  category: CommandCategory!
+  description: String!
+  name: String!
+}
+
+type Mutation {
+  createCommand(createCommandInput: [CreateCommandInput!]!): Int!
+}
+
+type Query {
+  command(name: String!): Command!
+  commands: [Command!]!
+}
