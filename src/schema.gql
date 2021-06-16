@@ -43,6 +43,7 @@ input CreateCommandInput {
 
 type Mutation {
   createCommand(createCommandInput: [CreateCommandInput!]!): Int!
+  dropCommands: Int
 }
 
 type Query {

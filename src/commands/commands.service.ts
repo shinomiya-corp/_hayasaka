@@ -13,6 +13,14 @@ export class CommandsService {
     @InjectConnection() private connection: Connection,
   ) {}
 
+  findAll() {
+    return this.commandRepo.find();
+  }
+
+  findOne(name: string) {
+    return this.commandRepo.findOneOrFail({ where: { name } });
+  }
+
   create(createCommandInput: CreateCommandInput[]) {
     const allArgs: Argument[] = [];
     const allCommands: Command[] = [];
@@ -41,11 +49,8 @@ export class CommandsService {
       .then(() => createCommandInput.length);
   }
 
-  findAll() {
-    return this.commandRepo.find();
-  }
-
-  findOne(name: string) {
-    return this.commandRepo.findOneOrFail({ where: { name } });
+  async drop() {
+    const res = await this.commandRepo.delete({});
+    return res.affected;
   }
 }
