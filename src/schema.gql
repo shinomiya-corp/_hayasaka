@@ -5,9 +5,9 @@
 type Argument {
   command: Command!
   id: ID!
-  multi: Boolean!
+  multi: Boolean
   name: String!
-  optional: Boolean!
+  optional: Boolean
 }
 
 type Command {
@@ -28,9 +28,9 @@ enum CommandCategory {
 }
 
 input CreateArgumentInput {
-  multi: Boolean!
+  multi: Boolean
   name: String!
-  optional: Boolean!
+  optional: Boolean
 }
 
 input CreateCommandInput {
@@ -42,8 +42,14 @@ input CreateCommandInput {
 }
 
 type Mutation {
-  createCommand(createCommandInput: [CreateCommandInput!]!): Int!
+  """Number of rows inserted."""
+  createCommand(commands: [CreateCommandInput!]!): Int!
+
+  """Number of rows deleted."""
   dropCommands: Int
+
+  """Number of rows inserted"""
+  seedCommands(commands: [CreateCommandInput!]!): Int
 }
 
 type Query {

@@ -21,7 +21,9 @@ export class CommandsService {
     return this.commandRepo.findOneOrFail({ where: { name } });
   }
 
-  create(createCommandInput: CreateCommandInput[]) {
+  private flattenCommands(
+    createCommandInput: CreateCommandInput[],
+  ): [Argument[], Command[]] {
     const allArgs: Argument[] = [];
     const allCommands: Command[] = [];
     createCommandInput.forEach((input) => {
@@ -29,7 +31,6 @@ export class CommandsService {
       const args = _args?.map(({ name, optional, multi }) =>
         this.argRepo.create({ name, optional, multi }),
       );
-      console.log(args);
       const command = this.commandRepo.create({
         name,
         description,
@@ -37,10 +38,14 @@ export class CommandsService {
         aliases,
       });
       command.args = args;
-      console.log(command);
       if (args) allArgs.push(...args);
       allCommands.push(command);
     });
+    return [allArgs, allCommands];
+  }
+
+  create(createCommandInput: CreateCommandInput[]) {
+    const [allArgs, allCommands] = this.flattenCommands(createCommandInput);
     return this.connection
       .transaction(async (transactionEntityManager) => {
         await transactionEntityManager.save(allArgs);
@@ -52,5 +57,16 @@ export class CommandsService {
   async drop() {
     const res = await this.commandRepo.delete({});
     return res.affected;
+  }
+
+  dropAndSeed(createCommandInput: CreateCommandInput[]) {
+    const [allArgs, allCommands] = this.flattenCommands(createCommandInput);
+    return this.connection
+      .transaction(async (transactionEntityManager) => {
+        await transactionEntityManager.delete(Command, {});
+        await transactionEntityManager.save(allArgs);
+        await transactionEntityManager.save(allCommands);
+      })
+      .then(() => createCommandInput.length);
   }
 }

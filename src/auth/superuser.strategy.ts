@@ -10,9 +10,7 @@ export class SuperuserStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(bearer: string): Promise<any> {
-    console.log(`received bearer ---> `, bearer);
     const authorized = await this.authService.validateSuperuser(bearer);
-    console.log(`inside strategy ---> authorized is `, authorized);
     if (!authorized) {
       throw new UnauthorizedException();
     }

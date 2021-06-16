@@ -13,13 +13,13 @@ export class Argument {
   @Field()
   name!: string;
 
-  @Column()
-  @Field()
-  optional!: boolean;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  optional?: boolean;
 
-  @Column()
-  @Field()
-  multi!: boolean;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  multi?: boolean;
 
   @ManyToOne(() => Command, (command) => command.args, { onDelete: 'CASCADE' })
   @Field(() => Command)

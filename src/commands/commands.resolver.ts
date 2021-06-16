@@ -20,17 +20,35 @@ export class CommandsResolver {
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => Int, { name: 'createCommand' })
+  @Mutation(() => Int, {
+    name: 'createCommand',
+    description: 'Number of rows inserted.',
+  })
   createCommand(
-    @Args('createCommandInput', { type: () => [CreateCommandInput] })
+    @Args('commands', { type: () => [CreateCommandInput] })
     createCommandInput: CreateCommandInput[],
   ) {
     return this.commandsService.create(createCommandInput);
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => Int, { nullable: true })
+  @Mutation(() => Int, {
+    nullable: true,
+    description: 'Number of rows deleted.',
+  })
   dropCommands() {
     return this.commandsService.drop();
+  }
+
+  @Mutation(() => Int, {
+    nullable: true,
+    description: 'Number of rows inserted',
+    name: 'seedCommands',
+  })
+  dropAndSeed(
+    @Args('commands', { type: () => [CreateCommandInput] })
+    createCommandInput: CreateCommandInput[],
+  ) {
+    this.commandsService.dropAndSeed(createCommandInput);
   }
 }
