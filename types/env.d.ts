@@ -3,5 +3,6 @@ declare namespace NodeJS {
     NODE_ENV: string;
     DATABASE_URL: string;
     REDISCLOUD_URL: string;
+    SUPERUSER_KEY: string;
   }
 }
