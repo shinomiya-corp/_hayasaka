@@ -1,18 +1,35 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+// import { PrismaClient } from '@prisma/client';
+// import { ping, pong } from '../src/common/test/commands';
+// import { guildA, guildB } from '../src/common/test/guilds';
+// const prisma = new PrismaClient();
 
-async function main() {
-  await prisma.command.createMany({
-    data: [
-      { name: 'ping', category: 'UTILITY', description: 'Ping the bot.' },
-      { name: 'pong', category: 'FUN', description: 'Play pong with the bot.' },
-    ],
-  });
-}
+// async function main() {
+//   await prisma.$transaction([
+//     prisma.command.createMany({
+//       data: [ping, pong],
+//     }),
+//     prisma.guild.create({
+//       data: {
+//         ...guildA,
+//         disabledCommands: {
+//           connect: { name: 'ping' },
+//         },
+//       },
+//     }),
+//     prisma.guild.create({
+//       data: {
+//         ...guildB,
+//         disabledCommands: {
+//           connect: { name: 'pong' },
+//         },
+//       },
+//     }),
+//   ]);
+// }
 
-main()
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+// main()
+//   .catch((err) => {
+//     console.error(err);
+//     process.exit(1);
+//   })
+//   .finally(() => prisma.$disconnect());

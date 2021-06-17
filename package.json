@@ -22,10 +22,10 @@
     "prepare": "husky install",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test": "yarn docker:up && yarn test:migrate && yarn test:seed && yarn test:jest",
+    "test:up": "yarn docker:up && yarn test:migrate && yarn test:seed && yarn test",
+    "test": "dotenv -e .env.test -- jest -i --watch",
     "test:migrate": "dotenv -e .env.test -- npx prisma migrate dev --name init",
-    "test:seed": "dotenv -e .env.test -- npx prisma db seed --preview-feature",
-    "test:jest": "dotenv -e .env.test -- jest -i"
+    "test:seed": "dotenv -e .env.test -- npx prisma db seed --preview-feature"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
