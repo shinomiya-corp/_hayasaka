@@ -22,18 +22,13 @@ export class CommandsService {
   }
 
   async drop() {
-    const res = await this.prisma.$transaction([
-      this.prisma.command.deleteMany(),
-      this.prisma.argument.deleteMany(),
-    ]);
-    const [c] = res;
-    return c.count;
+    const res = await this.prisma.command.deleteMany();
+    return res.count;
   }
 
   async dropAndSeed(createCommandInput: CreateCommandInput[]) {
     const res = await this.prisma.$transaction([
       this.prisma.command.deleteMany(),
-      this.prisma.argument.deleteMany(),
       ...this.toPrismaEnumerable(createCommandInput),
     ]);
     const [c] = res;

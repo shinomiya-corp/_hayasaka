@@ -17,15 +17,19 @@ export class GuildService {
           connect: disabledCommands?.map((name) => ({ name })),
         },
       },
+      include: { disabledCommands: true },
     });
   }
 
   findAll() {
-    return this.prisma.guild.findMany();
+    return this.prisma.guild.findMany({ include: { disabledCommands: true } });
   }
 
   findOne(id: string) {
-    this.prisma.guild.findUnique({ where: { id } });
+    return this.prisma.guild.findUnique({
+      where: { id },
+      include: { disabledCommands: true },
+    });
   }
 
   async update(id: string, updateGuildInput: UpdateGuildInput) {
@@ -39,10 +43,32 @@ export class GuildService {
           connect: disabledCommands?.map((name) => ({ name })),
         },
       },
+      include: { disabledCommands: true },
     });
   }
 
-  async remove(id: string) {
-    return this.prisma.guild.delete({ where: { id } });
+  async delete(id: string) {
+    return this.prisma.guild.delete({
+      where: { id },
+      include: { disabledCommands: true },
+    });
+  }
+
+  disableCommands(id: string, names: string[]) {
+    return this.prisma.guild.update({
+      where: { id },
+      data: { disabledCommands: { connect: names.map((name) => ({ name })) } },
+      include: { disabledCommands: true },
+    });
+  }
+
+  enableCommands(id: string, names: string[]) {
+    return this.prisma.guild.update({
+      where: { id },
+      data: {
+        disabledCommands: { disconnect: names.map((name) => ({ name })) },
+      },
+      include: { disabledCommands: true },
+    });
   }
 }

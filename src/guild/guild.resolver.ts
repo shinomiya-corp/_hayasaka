@@ -16,7 +16,7 @@ export class GuildResolver {
     return this.guildService.create(createGuildInput);
   }
 
-  @Query(() => [Guild], { name: 'guild' })
+  @Query(() => [Guild], { name: 'guilds' })
   findAll() {
     return this.guildService.findAll();
   }
@@ -35,7 +35,23 @@ export class GuildResolver {
   }
 
   @Mutation(() => Guild)
-  removeGuild(@Args('id', { type: () => String }) id: string) {
-    return this.guildService.remove(id);
+  deleteGuild(@Args('id', { type: () => String }) id: string) {
+    return this.guildService.delete(id);
+  }
+
+  @Mutation(() => Guild)
+  disableCommands(
+    @Args('id', { type: () => String }) id: string,
+    @Args('commands', { type: () => [String] }) commands: string[],
+  ) {
+    return this.guildService.disableCommands(id, commands);
+  }
+
+  @Mutation(() => Guild)
+  enableCommands(
+    @Args('id', { type: () => String }) id: string,
+    @Args('commands', { type: () => [String] }) commands: string[],
+  ) {
+    return this.guildService.enableCommands(id, commands);
   }
 }

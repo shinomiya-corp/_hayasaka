@@ -61,8 +61,10 @@ type Mutation {
   """Creates one to many commands."""
   createCommand(commands: [CreateCommandInput!]!): [Command!]!
   createGuild(createGuildInput: CreateGuildInput!): Guild!
+  deleteGuild(id: String!): Guild!
+  disableCommands(commands: [String!]!, id: String!): Guild!
   dropCommands: Int
-  removeGuild(id: String!): Guild!
+  enableCommands(commands: [String!]!, id: String!): Guild!
   seedCommands(commands: [CreateCommandInput!]!): Int
   updateGuild(updateGuildInput: UpdateGuildInput!): Guild!
 }
@@ -71,6 +73,7 @@ type Query {
   command(name: String!): Command!
   commands: [Command!]!
   guild(id: String!): Guild!
+  guilds: [Guild!]!
 }
 
 input UpdateGuildInput {

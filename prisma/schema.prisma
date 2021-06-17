@@ -22,6 +22,7 @@ model Argument {
   name      String
   optional  Boolean?
   multi     Boolean?
+  // ON DELETE CASCADE
   command   Command  @relation(fields: [commandId], references: [id])
   commandId Int
 }
