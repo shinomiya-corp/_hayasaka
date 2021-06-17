@@ -1,6 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { SuperuserGuard } from 'src/auth/superuser.guard';
+import { SuperuserGuard } from '../auth/superuser/superuser.guard';
 import { CommandsService } from './commands.service';
 import { CreateCommandInput } from './dto/create-command.input';
 import { Command } from './entities/command.entity';
@@ -20,9 +20,9 @@ export class CommandsResolver {
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => Int, {
+  @Mutation(() => [Command], {
     name: 'createCommand',
-    description: 'Number of rows inserted.',
+    description: 'Creates one to many commands.',
   })
   createCommand(
     @Args('commands', { type: () => [CreateCommandInput] })
@@ -32,23 +32,17 @@ export class CommandsResolver {
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => Int, {
-    nullable: true,
-    description: 'Number of rows deleted.',
-  })
+  @Mutation(() => Int, { nullable: true })
   dropCommands() {
     return this.commandsService.drop();
   }
 
-  @Mutation(() => Int, {
-    nullable: true,
-    description: 'Number of rows inserted',
-    name: 'seedCommands',
-  })
+  @UseGuards(SuperuserGuard)
+  @Mutation(() => Int, { nullable: true, name: 'seedCommands' })
   dropAndSeed(
     @Args('commands', { type: () => [CreateCommandInput] })
     createCommandInput: CreateCommandInput[],
   ) {
-    this.commandsService.dropAndSeed(createCommandInput);
+    return this.commandsService.dropAndSeed(createCommandInput);
   }
 }

@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CommandsService } from './commands.service';
+import { PrismaService } from 'src/database/prisma.service';
 import { CommandsResolver } from './commands.resolver';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Command } from './entities/command.entity';
-import { Argument } from './entities/argument.entity';
+import { CommandsService } from './commands.service';
 
 @Module({
-  providers: [CommandsResolver, CommandsService],
-  imports: [TypeOrmModule.forFeature([Command, Argument])],
+  providers: [CommandsResolver, CommandsService, PrismaService],
 })
 export class CommandsModule {}

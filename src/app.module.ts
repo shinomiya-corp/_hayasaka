@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { CommandsModule } from './commands/commands.module';
+import { GuildModule } from './guild/guild.module';
 
 @Module({
   imports: [
@@ -12,8 +12,8 @@ import { CommandsModule } from './commands/commands.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
     }),
-    TypeOrmModule.forRoot(),
     AuthModule,
+    GuildModule,
   ],
   // providers: [AuthService],
 })

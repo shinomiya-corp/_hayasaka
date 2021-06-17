@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Command {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique
+  args        Argument[]
+  description String
+  category    CommandCategory
+  aliases     String[]
+  disabledIn  Guild[]
+}
+
+model Argument {
+  id        Int      @id @default(autoincrement())
+  name      String
+  optional  Boolean?
+  multi     Boolean?
+  command   Command  @relation(fields: [commandId], references: [id])
+  commandId Int
+}
+
+enum CommandCategory {
+  CURRENCY
+  FUN
+  GAMES
+  MUSIC
+  UTILITY
+}
+
+model Guild {
+  id               String    @id
+  customPrefix     String?
+  disabledCommands Command[]
+}

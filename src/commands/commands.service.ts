@@ -1,72 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { PrismaService } from 'src/database/prisma.service';
 import { CreateCommandInput } from './dto/create-command.input';
-import { Argument } from './entities/argument.entity';
-import { Command } from './entities/command.entity';
 
 @Injectable()
 export class CommandsService {
-  constructor(
-    @InjectRepository(Command) private commandRepo: Repository<Command>,
-    @InjectRepository(Argument) private argRepo: Repository<Argument>,
-    @InjectConnection() private connection: Connection,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.commandRepo.find();
+    return this.prisma.command.findMany();
   }
 
   findOne(name: string) {
-    return this.commandRepo.findOneOrFail({ where: { name } });
+    return this.prisma.command.findUnique({ where: { name } });
   }
 
-  private flattenCommands(
-    createCommandInput: CreateCommandInput[],
-  ): [Argument[], Command[]] {
-    const allArgs: Argument[] = [];
-    const allCommands: Command[] = [];
-    createCommandInput.forEach((input) => {
-      const { name, description, category, aliases, args: _args } = input;
-      const args = _args?.map(({ name, optional, multi }) =>
-        this.argRepo.create({ name, optional, multi }),
-      );
-      const command = this.commandRepo.create({
-        name,
-        description,
-        category,
-        aliases,
-      });
-      command.args = args;
-      if (args) allArgs.push(...args);
-      allCommands.push(command);
-    });
-    return [allArgs, allCommands];
-  }
-
-  create(createCommandInput: CreateCommandInput[]) {
-    const [allArgs, allCommands] = this.flattenCommands(createCommandInput);
-    return this.connection
-      .transaction(async (transactionEntityManager) => {
-        await transactionEntityManager.save(allArgs);
-        await transactionEntityManager.save(allCommands);
-      })
-      .then(() => createCommandInput.length);
+  async create(createCommandInput: CreateCommandInput[]) {
+    const res = this.prisma.$transaction(
+      this.toPrismaEnumerable(createCommandInput),
+    );
+    return res;
   }
 
   async drop() {
-    const res = await this.commandRepo.delete({});
-    return res.affected;
+    const res = await this.prisma.$transaction([
+      this.prisma.command.deleteMany(),
+      this.prisma.argument.deleteMany(),
+    ]);
+    const [c] = res;
+    return c.count;
   }
 
-  dropAndSeed(createCommandInput: CreateCommandInput[]) {
-    const [allArgs, allCommands] = this.flattenCommands(createCommandInput);
-    return this.connection
-      .transaction(async (transactionEntityManager) => {
-        await transactionEntityManager.delete(Command, {});
-        await transactionEntityManager.save(allArgs);
-        await transactionEntityManager.save(allCommands);
-      })
-      .then(() => createCommandInput.length);
+  async dropAndSeed(createCommandInput: CreateCommandInput[]) {
+    const res = await this.prisma.$transaction([
+      this.prisma.command.deleteMany(),
+      this.prisma.argument.deleteMany(),
+      ...this.toPrismaEnumerable(createCommandInput),
+    ]);
+    const [c] = res;
+    return c.count;
+  }
+
+  private toPrismaEnumerable(createCommandInput: CreateCommandInput[]) {
+    return createCommandInput.map(
+      ({ name, description, category, aliases, args }) =>
+        this.prisma.command.create({
+          data: {
+            name,
+            description,
+            category,
+            aliases,
+            args: {
+              createMany: {
+                data: args || [],
+              },
+            },
+          },
+          include: { args: true },
+        }),
+    );
   }
 }

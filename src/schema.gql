@@ -41,18 +41,42 @@ input CreateCommandInput {
   name: String!
 }
 
+input CreateGuildInput {
+  customPrefix: String
+
+  """The commands to disable in this server."""
+  disabledCommands: [String!]
+  id: String!
+}
+
+type Guild {
+  customPrefix: String
+
+  """Array of commands disabled in this server."""
+  disabledCommands: [Command!]
+  id: String!
+}
+
 type Mutation {
-  """Number of rows inserted."""
-  createCommand(commands: [CreateCommandInput!]!): Int!
-
-  """Number of rows deleted."""
+  """Creates one to many commands."""
+  createCommand(commands: [CreateCommandInput!]!): [Command!]!
+  createGuild(createGuildInput: CreateGuildInput!): Guild!
   dropCommands: Int
-
-  """Number of rows inserted"""
+  removeGuild(id: String!): Guild!
   seedCommands(commands: [CreateCommandInput!]!): Int
+  updateGuild(updateGuildInput: UpdateGuildInput!): Guild!
 }
 
 type Query {
   command(name: String!): Command!
   commands: [Command!]!
+  guild(id: String!): Guild!
+}
+
+input UpdateGuildInput {
+  customPrefix: String
+
+  """The commands to disable in this server."""
+  disabledCommands: [String!]
+  id: String!
 }

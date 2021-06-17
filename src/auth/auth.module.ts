@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SuperuserStrategy } from './superuser.strategy';
+import { SuperuserStrategy } from './superuser/superuser.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 

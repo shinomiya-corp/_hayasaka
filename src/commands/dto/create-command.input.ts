@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { CommandCategory } from '../entities/command.entity';
+import { CommandCategory } from '@prisma/client';
 import { CreateArgumentInput } from './create-argument.input';
 
 @InputType()
