@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Command } from 'src/commands/entities/command.entity';
+import { Command } from '../../commands/entities/command.entity';
 
 @ObjectType()
 export class Guild {
