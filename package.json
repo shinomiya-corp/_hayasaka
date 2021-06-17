@@ -20,10 +20,12 @@
     "test:debug": "dotenv -e .env.test -- node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
-    "migrate:init": "dotenv -e .env.test -- npx prisma migrate dev --name init",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test": "yarn docker:up && yarn migrate:init && dotenv -e .env.test -- jest -i"
+    "test": "yarn docker:up && yarn test:migrate && yarn test:seed && yarn test:jest",
+    "test:migrate": "dotenv -e .env.test -- npx prisma migrate dev --name init",
+    "test:seed": "dotenv -e .env.test -- npx prisma db seed --preview-feature",
+    "test:jest": "dotenv -e .env.test -- jest -i"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
