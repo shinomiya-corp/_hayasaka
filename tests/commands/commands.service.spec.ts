@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mock } from 'jest-mock-extended';
-import { PrismaService } from '../database/prisma.service';
-import { CommandsService } from './commands.service';
+import { CommandsService } from '../../src/commands/commands.service';
+import { PrismaService } from '../../src/database/prisma.service';
 
 const mockPrismaService = mock<PrismaService>();
 

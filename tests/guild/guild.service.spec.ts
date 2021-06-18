@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ping, pong } from '../common/test/commands';
-import { guildA, guildB } from '../common/test/guilds';
-import { resetDatabase } from '../common/test/resetDatabase';
-import { PrismaService } from '../database/prisma.service';
-import { CreateGuildInput } from './dto/create-guild.input';
-import { GuildService } from './guild.service';
+import { ping, pong } from '../common/commands';
+import { guildA, guildB } from '../common/guilds';
+import { resetDatabase } from '../common/resetDatabase';
+import { PrismaService } from '../../src/database/prisma.service';
+import { CreateGuildInput } from '../../src/guild/dto/create-guild.input';
+import { GuildService } from '../../src/guild/guild.service';
 
 describe('GuildService', () => {
   let service: GuildService;
+  // NOT a mocked PrismaService, we're connecting to the test db in Docker
   let prisma: PrismaService;
 
   beforeEach(async () => {

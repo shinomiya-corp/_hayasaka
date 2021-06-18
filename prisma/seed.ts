@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { resetDatabase } from '../src/common/test/resetDatabase';
+import { resetDatabase } from '../tests/common/resetDatabase';
 const prisma = new PrismaClient();
 
 resetDatabase(prisma)

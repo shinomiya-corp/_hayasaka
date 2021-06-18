@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mock } from 'jest-mock-extended';
-import { CommandsResolver } from './commands.resolver';
-import { CommandsService } from './commands.service';
+import { CommandsResolver } from '../../src/commands/commands.resolver';
+import { CommandsService } from '../../src/commands/commands.service';
 
 const mockCommandsService = mock<CommandsService>();
 

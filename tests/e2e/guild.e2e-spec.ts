@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { resetDatabase } from '../src/common/test/resetDatabase';
-import { PrismaService } from '../src/database/prisma.service';
+import { AppModule } from '../../src/app.module';
+import { resetDatabase } from '../common/resetDatabase';
+import { PrismaService } from '../../src/database/prisma.service';
 import {
   createGuildMutation,
   createGuildMutationResult,

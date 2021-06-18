@@ -18,7 +18,7 @@
     "test:watch": "yarn test --watch",
     "test:cov": "yarn test --coverage",
     "test:debug": "dotenv -e .env.test -- node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "dotenv -e .env.test -- jest --watch --config ./test/jest-e2e.json",
+    "test:e2e": "dotenv -e .env.test -- jest --watch --config ./test/e2e/jest-e2e.json",
     "prepare": "husky install",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",

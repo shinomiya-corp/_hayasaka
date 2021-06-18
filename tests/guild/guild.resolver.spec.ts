@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mock, mockReset } from 'jest-mock-extended';
-import { GuildResolver } from './guild.resolver';
-import { GuildService } from './guild.service';
+import { GuildResolver } from '../../src/guild/guild.resolver';
+import { GuildService } from '../../src/guild/guild.service';
 
 describe('GuildResolver', () => {
   let resolver: GuildResolver;
