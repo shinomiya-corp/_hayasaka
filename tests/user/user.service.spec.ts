@@ -44,6 +44,13 @@ describe('UserService', () => {
       const _res = await prisma.user.findUnique({ where: { id: saber.id } });
       expect(_res).toEqual(newSaber);
     });
+    it('should return null if user to update does not exist', async () => {
+      const res = await service.update('does-not-exist', {
+        id: 'does-not-exist',
+        ribbons: 100,
+      });
+      expect(res).toBeNull();
+    });
   });
 
   describe('#findAll', () => {

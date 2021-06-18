@@ -99,6 +99,7 @@ type Mutation {
   incrRibbon(incrRibbonInput: IncrRibbonInput!): User!
   seedCommands(commands: [CreateCommandInput!]!): Int
   updateGuild(updateGuildInput: UpdateGuildInput!): Guild!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
@@ -116,6 +117,15 @@ input UpdateGuildInput {
   """The commands to disable in this server."""
   disabledCommands: [String!]
   id: String!
+}
+
+input UpdateUserInput {
+  """The user's Discord ID."""
+  id: String!
+  ribbons: Int
+
+  """Discord tag, e.g., doraemon#4200"""
+  tag: String
 }
 
 type User {

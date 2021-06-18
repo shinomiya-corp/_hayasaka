@@ -42,6 +42,26 @@ describe('UserResolver', () => {
     });
   });
 
+  describe('#updateUser', () => {
+    const newSaber = { ...saber, ribbons: 100 };
+    it('should return the updated user', async () => {
+      jest.spyOn(mockUserService, 'update').mockResolvedValue(newSaber);
+      const res = await resolver.updateUser(newSaber);
+      expect(res).toEqual(newSaber);
+    });
+    it('should throw an error if the user does not exist', () => {
+      jest.spyOn(mockUserService, 'update').mockResolvedValue(null);
+      expect(() =>
+        resolver.updateUser({ id: 'does-not-exist', ribbons: 0 }),
+      ).rejects.toThrow();
+    });
+    it('should throw an error if the ribbon count is negative', () => {
+      expect(() =>
+        resolver.updateUser({ id: saber.id, ribbons: -2000 }),
+      ).rejects.toThrow();
+    });
+  });
+
   describe('#findAll', () => {
     it('should return all the users', async () => {
       jest

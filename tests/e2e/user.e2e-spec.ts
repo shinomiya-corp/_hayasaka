@@ -36,6 +36,12 @@ import {
   decrRibbonMutationResult,
   decrRibbonNonUserMutation,
 } from './queries/user/decrRibbonMutation';
+import {
+  updateNotExistsUserMutation,
+  updateUserMutation,
+  updateUserMutationResult,
+  updateUserNegativeRibbonsMutation,
+} from './queries/user/updateUserMutation';
 
 describe('User Resolvers (e2e)', () => {
   let app: INestApplication;
@@ -76,6 +82,38 @@ describe('User Resolvers (e2e)', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({ query: createDupUserMutation })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeNull();
+          expect(res.body.errors).not.toBeNull();
+        });
+    });
+  });
+
+  describe('#updateUser', () => {
+    it('should return the user with updated values', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: updateUserMutation })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual(updateUserMutationResult);
+        });
+    });
+    it('should return error if user does not exist', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: updateNotExistsUserMutation })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeNull();
+          expect(res.body.errors).not.toBeNull();
+        });
+    });
+    it('should return error if ribbons count is negative', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: updateUserNegativeRibbonsMutation })
         .expect(200)
         .expect((res) => {
           expect(res.body.data).toBeNull();

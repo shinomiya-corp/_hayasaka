@@ -17,10 +17,12 @@ export class UserService {
   }
 
   update(id: string, updateUserInput: UpdateUserInput) {
-    return this.prisma.user.update({
-      where: { id },
-      data: updateUserInput,
-    });
+    return this.prisma.user
+      .update({
+        where: { id },
+        data: updateUserInput,
+      })
+      .catch(() => null);
   }
 
   findAll() {
