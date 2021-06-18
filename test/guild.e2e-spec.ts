@@ -16,6 +16,10 @@ import {
   disableCommandsMutation,
   disableCommandsMutationResult,
 } from './queries/disableCommandsMutation';
+import {
+  enableCommandsMutation,
+  enableCommandsMutationResults,
+} from './queries/enableCommandsMutation';
 import { guildQuery, guildQueryResult } from './queries/guildQuery';
 import { guildsQuery, guildsQueryResult } from './queries/guildsQuery';
 import {
@@ -160,6 +164,31 @@ describe('Guild Resolvers (e2e)', () => {
             { name: 'ping' },
             { name: 'pong' },
           ]);
+        });
+    });
+  });
+
+  describe('#enableCommands', () => {
+    it('should return updated guild', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: enableCommandsMutation })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual(enableCommandsMutationResults);
+        });
+    });
+
+    it('should actually enable the commands', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: enableCommandsMutation })
+        .then(async () => {
+          const res = await prisma.guild.findUnique({
+            where: { id: 'a' },
+            select: { disabledCommands: { select: { name: true } } },
+          });
+          expect(res?.disabledCommands).toEqual([]);
         });
     });
   });

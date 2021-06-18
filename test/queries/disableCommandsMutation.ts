@@ -5,7 +5,6 @@ mutation disableCommands {
     customPrefix
     disabledCommands {
       name
-      description
     }
   }
 }
@@ -19,12 +18,10 @@ export const disableCommandsMutationResult = JSON.parse(`
       "customPrefix": "!",
       "disabledCommands": [
         {
-          "name": "ping",
-          "description": "Ping the bot."
+          "name": "ping"
         },
         {
-          "name": "pong",
-          "description": "Pong the bot."
+          "name": "pong"
         }
       ]
     }
