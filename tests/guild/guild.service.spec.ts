@@ -20,22 +20,31 @@ describe('GuildService', () => {
     prisma = module.get<PrismaService>(PrismaService);
   });
 
-  afterEach(() => resetDatabase(prisma));
+  afterEach(async () => {
+    await resetDatabase(prisma);
+    await prisma.$disconnect();
+  });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
   describe('#create', () => {
+    const newGuild: CreateGuildInput = {
+      id: 'once',
+      customPrefix: 'once',
+      disabledCommands: ['ping', 'pong'],
+    };
+
     it('should return a guild', async () => {
-      const newGuild: CreateGuildInput = {
-        id: 'ffsafdfpoefm',
-        customPrefix: 'chika',
-        disabledCommands: ['ping', 'pong'],
-      };
       const res = await service.create(newGuild);
-      await service.delete(newGuild.id);
       expect(res).toEqual({ ...newGuild, disabledCommands: [ping, pong] });
+    });
+
+    it('should actually create the fucking guild', async () => {
+      await service.create(newGuild);
+      const res = await prisma.guild.findUnique({ where: { id: newGuild.id } });
+      expect(res).not.toBeNull();
     });
   });
 
@@ -59,17 +68,25 @@ describe('GuildService', () => {
   });
 
   describe('#update', () => {
+    const updateInput = {
+      id: guildA.id,
+      customPrefix: 'foo',
+      disabledCommands: ['pong'],
+    };
+    const updated = { ...updateInput, disabledCommands: [ping, pong] };
+
     it('should return with updated values', async () => {
-      const res = await service.update(guildA.id, {
-        id: guildA.id,
-        customPrefix: 'foo',
-        disabledCommands: ['pong'],
+      const res = await service.update(guildA.id, updateInput);
+      expect(res).toEqual(updated);
+    });
+
+    it('should actually update the fucking guild', async () => {
+      await service.update(guildA.id, updateInput);
+      const res = await prisma.guild.findUnique({
+        where: { id: guildA.id },
+        include: { disabledCommands: true },
       });
-      expect(res).toEqual({
-        ...guildA,
-        customPrefix: 'foo',
-        disabledCommands: [ping, pong],
-      });
+      expect(res).toEqual(updated);
     });
   });
 
@@ -78,6 +95,12 @@ describe('GuildService', () => {
       const res = await service.delete(guildA.id);
       expect(res).toEqual({ ...guildA, disabledCommands: [ping] });
     });
+
+    it('should actually delete the fucking guild', async () => {
+      await service.delete(guildA.id);
+      const res = await prisma.guild.findUnique({ where: { id: guildA.id } });
+      expect(res).toBeNull();
+    });
   });
 
   describe('#disableCommands', () => {
@@ -85,12 +108,33 @@ describe('GuildService', () => {
       const res = await service.disableCommands(guildA.id, ['ping', 'pong']);
       expect(res).toEqual({ ...guildA, disabledCommands: [ping, pong] });
     });
+
+    it('should actually disable the fucking commands', async () => {
+      await service.disableCommands(guildA.id, ['ping', 'pong']);
+      const res = await prisma.guild.findUnique({
+        where: { id: guildA.id },
+        select: { disabledCommands: { select: { name: true } } },
+      });
+      expect(res?.disabledCommands).toEqual([
+        { name: 'ping' },
+        { name: 'pong' },
+      ]);
+    });
   });
 
   describe('#enableCommands', () => {
     it('should return guild with updated disabled commands', async () => {
       const res = await service.enableCommands(guildA.id, ['ping', 'pong']);
       expect(res).toEqual({ ...guildA, disabledCommands: [] });
+    });
+
+    it('should actually enable the fucking commands', async () => {
+      await service.enableCommands(guildA.id, ['ping', 'pong']);
+      const res = await prisma.guild.findUnique({
+        where: { id: guildA.id },
+        select: { disabledCommands: { select: { name: true } } },
+      });
+      expect(res?.disabledCommands).toEqual([]);
     });
   });
 });

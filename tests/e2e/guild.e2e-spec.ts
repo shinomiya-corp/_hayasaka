@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { resetDatabase } from '../common/resetDatabase';
 import { PrismaService } from '../../src/database/prisma.service';
+import { resetDatabase } from '../common/resetDatabase';
 import {
   createGuildMutation,
   createGuildMutationResult,
@@ -40,7 +40,10 @@ describe('Guild Resolvers (e2e)', () => {
     await app.init();
   });
 
-  afterEach(() => resetDatabase(prisma));
+  afterEach(async () => {
+    await resetDatabase(prisma);
+    await prisma.$disconnect();
+  });
   afterAll(() => app.close());
 
   describe('#createGuild', () => {

@@ -40,3 +40,9 @@ model Guild {
   customPrefix     String?
   disabledCommands Command[]
 }
+
+model User {
+  id      String @id
+  tag     String @unique
+  ribbons Int
+}
