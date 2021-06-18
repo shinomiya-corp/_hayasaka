@@ -49,6 +49,25 @@ input CreateGuildInput {
   id: String!
 }
 
+input CreateUserInput {
+  """The user's Discord ID."""
+  id: String!
+  ribbons: Int!
+
+  """Discord tag, e.g., doraemon#4200"""
+  tag: String!
+}
+
+input DecrRibbonInput {
+  decrement: Int!
+
+  """The user's Discord ID."""
+  id: String!
+
+  """Discord tag, e.g., doraemon#4200"""
+  tag: String!
+}
+
 type Guild {
   customPrefix: String
 
@@ -57,16 +76,27 @@ type Guild {
   id: String!
 }
 
+input IncrRibbonInput {
+  """The user's Discord ID."""
+  id: String!
+  increment: Int!
+
+  """Discord tag, e.g., doraemon#4200"""
+  tag: String!
+}
+
 type Mutation {
   """Creates one to many commands."""
   createCommand(commands: [CreateCommandInput!]!): [Command!]!
   createGuild(createGuildInput: CreateGuildInput!): Guild!
-  createUser(createUserInput: UpsertUserInput!): User!
+  createUser(createUserInput: CreateUserInput!): User!
+  decrRibbon(decrRibbonInput: DecrRibbonInput!): User!
   deleteGuild(id: String!): Guild!
-  deleteUser(id: Int!): User!
+  deleteUser(id: String!): User!
   disableCommands(commands: [String!]!, id: String!): Guild!
   dropCommands: Int
   enableCommands(commands: [String!]!, id: String!): Guild!
+  incrRibbon(incrRibbonInput: IncrRibbonInput!): User!
   seedCommands(commands: [CreateCommandInput!]!): Int
   updateGuild(updateGuildInput: UpdateGuildInput!): Guild!
 }
@@ -76,7 +106,8 @@ type Query {
   commands: [Command!]!
   guild(id: String!): Guild!
   guilds: [Guild!]!
-  user(id: Int!): User!
+  user(id: String!): User
+  users: [User!]!
 }
 
 input UpdateGuildInput {
@@ -85,15 +116,6 @@ input UpdateGuildInput {
   """The commands to disable in this server."""
   disabledCommands: [String!]
   id: String!
-}
-
-input UpsertUserInput {
-  """The user's Discord ID."""
-  id: String!
-  ribbons: Int
-
-  """Discord tag, e.g., doraemon#4200"""
-  tag: String!
 }
 
 type User {

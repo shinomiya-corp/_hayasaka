@@ -1,29 +1,55 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { UserService } from './user.service';
-import { User } from './entities/user.entity';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UserInputError } from 'apollo-server-express';
 import { CreateUserInput } from './dto/create-user.input';
+import { DecrRibbonInput, IncrRibbonInput } from './dto/update-ribbon-input';
+import { User } from './entities/user.entity';
+import { UserService } from './user.service';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation(() => User)
-  createUser(@Args('createUserInput') upsertUserInput: CreateUserInput) {
-    return this.userService.create(upsertUserInput);
+  async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    const res = await this.userService.create(createUserInput);
+    if (res) return res;
+    throw new Error(`User with ID ${createUserInput.id} already exists.`);
   }
 
-  @Query(() => [User], { name: 'user' })
+  @Query(() => [User], { name: 'users' })
   findAll() {
     return this.userService.findAll();
   }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => String }) id: string) {
+  @Query(() => User, { name: 'user', nullable: true })
+  async findOne(@Args('id', { type: () => String }) id: string) {
     return this.userService.findOne(id);
   }
 
   @Mutation(() => User)
-  deleteUser(@Args('id', { type: () => String }) id: string) {
-    return this.userService.delete(id);
+  async deleteUser(@Args('id', { type: () => String }) id: string) {
+    const res = await this.userService.delete(id);
+    if (res) return res;
+    throw new Error(`User with ID ${id} does not exists.`);
+  }
+
+  @Mutation(() => User)
+  async incrRibbon(
+    @Args('incrRibbonInput', { type: () => IncrRibbonInput })
+    incrRibbonInput: IncrRibbonInput,
+  ) {
+    return this.userService.incrRibbon(incrRibbonInput);
+  }
+
+  @Mutation(() => User)
+  async decrRibbon(
+    @Args('decrRibbonInput', { type: () => DecrRibbonInput })
+    decrRibbonInput: DecrRibbonInput,
+  ) {
+    const res = await this.userService.decrRibbon(decrRibbonInput);
+    if (res) return res;
+    throw new UserInputError(
+      "This operation would result in the user's ribbon count becoming negative, which is not permitted.",
+    );
   }
 }

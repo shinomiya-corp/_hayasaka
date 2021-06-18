@@ -51,12 +51,23 @@ describe('UserService', () => {
       const res = await service.findAll();
       expect(res).toEqual(expect.arrayContaining([saber, doraemon]));
     });
+
+    it('should return an empty list if no users are found', async () => {
+      await prisma.user.deleteMany();
+      const res = await service.findAll();
+      expect(res).toEqual([]);
+    });
   });
 
   describe('#findOne', () => {
     it('should return saber', async () => {
       const res = await service.findOne('1');
       expect(res).toEqual(saber);
+    });
+
+    it('should return null if the user does not exist in db', async () => {
+      const res = await service.findOne('does-not-exist');
+      expect(res).toBeNull();
     });
   });
 
@@ -66,6 +77,11 @@ describe('UserService', () => {
       expect(res).toEqual(saber);
       const _res = await prisma.user.findUnique({ where: { id: saber.id } });
       expect(_res).toBeNull();
+    });
+
+    it('should return null if the user does not exist', async () => {
+      const res = await service.delete('does-not-exist');
+      expect(res).toBeNull();
     });
   });
 
@@ -82,6 +98,17 @@ describe('UserService', () => {
         select: { ribbons: true },
       });
       expect(_res?.ribbons).toBe(2);
+    });
+
+    it('should create new user if they do not exist', async () => {
+      const pepe = { id: '3', tag: 'pepe#3' };
+      const res = await service.incrRibbon({
+        ...pepe,
+        increment: 1,
+      });
+      expect(res).toEqual({ ...pepe, ribbons: 1 });
+      const _res = await prisma.user.findUnique({ where: { id: pepe.id } });
+      expect(_res).not.toBeNull();
     });
   });
 

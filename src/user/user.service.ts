@@ -9,9 +9,11 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createUserInput: CreateUserInput) {
-    return this.prisma.user.create({
-      data: createUserInput,
-    });
+    return this.prisma.user
+      .create({
+        data: createUserInput,
+      })
+      .catch(() => null);
   }
 
   update(id: string, updateUserInput: UpdateUserInput) {
@@ -30,7 +32,7 @@ export class UserService {
   }
 
   delete(id: string) {
-    return this.prisma.user.delete({ where: { id } });
+    return this.prisma.user.delete({ where: { id } }).catch(() => null);
   }
 
   async incrRibbon(incrRibbonInput: IncrRibbonInput) {

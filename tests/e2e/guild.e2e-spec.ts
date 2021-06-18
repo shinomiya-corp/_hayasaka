@@ -1,31 +1,33 @@
 import { INestApplication } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Test, TestingModule } from '@nestjs/testing';
+import { join } from 'path';
 import * as request from 'supertest';
-import { AppModule } from '../../src/app.module';
 import { PrismaService } from '../../src/database/prisma.service';
+import { GuildModule } from '../../src/guild/guild.module';
 import { resetDatabase } from '../common/resetDatabase';
 import {
   createGuildMutation,
   createGuildMutationResult,
-} from './queries/createGuildMutation';
+} from './queries/guild/createGuildMutation';
 import {
   deleteGuildMutation,
   deleteGuildMutationResult,
-} from './queries/deleteGuildMutation';
+} from './queries/guild/deleteGuildMutation';
 import {
   disableCommandsMutation,
   disableCommandsMutationResult,
-} from './queries/disableCommandsMutation';
+} from './queries/guild/disableCommandsMutation';
 import {
   enableCommandsMutation,
   enableCommandsMutationResults,
-} from './queries/enableCommandsMutation';
-import { guildQuery, guildQueryResult } from './queries/guildQuery';
-import { guildsQuery, guildsQueryResult } from './queries/guildsQuery';
+} from './queries/guild/enableCommandsMutation';
+import { guildQuery, guildQueryResult } from './queries/guild/guildQuery';
+import { guildsQuery, guildsQueryResult } from './queries/guild/guildsQuery';
 import {
   updateGuildMutation,
   updateGuildMutationResults,
-} from './queries/updateGuildMutation';
+} from './queries/guild/updateGuildMutation';
 
 describe('Guild Resolvers (e2e)', () => {
   let app: INestApplication;
@@ -33,7 +35,12 @@ describe('Guild Resolvers (e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        GuildModule,
+        GraphQLModule.forRoot({
+          autoSchemaFile: join(process.cwd(), '../../src/schema.gql'),
+        }),
+      ],
     }).compile();
     app = moduleRef.createNestApplication();
     prisma = moduleRef.get<PrismaService>(PrismaService);

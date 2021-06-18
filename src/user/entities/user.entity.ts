@@ -1,5 +1,4 @@
-import { ObjectType, Field, Int, createUnionType } from '@nestjs/graphql';
-import { BaseError } from '../../common/dto/error.entity';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class User {
@@ -12,11 +11,3 @@ export class User {
   @Field(() => Int, { nullable: true })
   ribbons?: number;
 }
-
-@ObjectType({ implements: BaseError })
-class RibbonValueError extends BaseError {}
-
-export const UpdateRibbonResult = createUnionType({
-  name: 'UpdateRibbonResult',
-  types: () => [User, RibbonValueError],
-});
