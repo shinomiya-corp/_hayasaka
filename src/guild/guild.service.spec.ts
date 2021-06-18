@@ -1,17 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { guildA, guildB } from '../common/test/guilds';
 import { ping, pong } from '../common/test/commands';
+import { guildA, guildB } from '../common/test/guilds';
+import { resetDatabase } from '../common/test/resetDatabase';
 import { PrismaService } from '../database/prisma.service';
 import { CreateGuildInput } from './dto/create-guild.input';
 import { GuildService } from './guild.service';
-import { PrismaClient } from '@prisma/client';
-import { resetDatabase } from '../common/test/reset';
-
-const prisma = new PrismaClient();
-afterAll(() => prisma.$disconnect());
 
 describe('GuildService', () => {
   let service: GuildService;
+  let prisma: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,8 +16,10 @@ describe('GuildService', () => {
     }).compile();
 
     service = module.get<GuildService>(GuildService);
-    await resetDatabase(prisma);
+    prisma = module.get<PrismaService>(PrismaService);
   });
+
+  afterEach(() => resetDatabase(prisma));
 
   it('should be defined', () => {
     expect(service).toBeDefined();

@@ -4,13 +4,17 @@ import { guildA, guildB } from './guilds';
 
 export const resetDatabase = async (prisma: PrismaClient) => {
   await prisma.$transaction([
+    prisma.$executeRaw(`
+    TRUNCATE TABLE 
+    "Command", 
+    "Guild" 
+    RESTART IDENTITY
+    CASCADE`),
     // commands
-    prisma.command.deleteMany(),
     prisma.command.createMany({
       data: [ping, pong],
     }),
     // guilds
-    prisma.guild.deleteMany(),
     prisma.guild.create({
       data: {
         ...guildA,

@@ -11,10 +11,10 @@ import { GuildModule } from './guild/guild.module';
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      debug: true,
     }),
     AuthModule,
     GuildModule,
   ],
-  // providers: [AuthService],
 })
 export class AppModule {}
