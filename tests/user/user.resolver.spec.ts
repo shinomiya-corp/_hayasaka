@@ -67,7 +67,7 @@ describe('UserResolver', () => {
       jest
         .spyOn(mockUserService, 'findAll')
         .mockResolvedValue([saber, doraemon]);
-      const res = await resolver.findAll();
+      const res = await resolver.findUsers();
       expect(res).toEqual(expect.arrayContaining([saber, doraemon]));
     });
   });
@@ -75,13 +75,13 @@ describe('UserResolver', () => {
   describe('#findOne', () => {
     it('should return one user', async () => {
       jest.spyOn(mockUserService, 'findOne').mockResolvedValue(saber);
-      const res = await resolver.findOne(saber.id);
+      const res = await resolver.findOneUser(saber.id);
       expect(res).toEqual(saber);
     });
 
     it('should return null if service returns null', async () => {
       jest.spyOn(mockUserService, 'findOne').mockResolvedValue(null);
-      const res = await resolver.findOne(saber.id);
+      const res = await resolver.findOneUser(saber.id);
       expect(res).toBeNull();
     });
   });

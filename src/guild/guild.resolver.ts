@@ -16,13 +16,13 @@ export class GuildResolver {
     return this.guildService.create(createGuildInput);
   }
 
-  @Query(() => [Guild], { name: 'guilds' })
-  findAll() {
+  @Query(() => [Guild])
+  findGuilds() {
     return this.guildService.findAll();
   }
 
-  @Query(() => Guild, { name: 'guild' })
-  findOne(@Args('id', { type: () => String }) id: string) {
+  @Query(() => Guild)
+  findOneGuild(@Args('id', { type: () => String }) id: string) {
     return this.guildService.findOne(id);
   }
 

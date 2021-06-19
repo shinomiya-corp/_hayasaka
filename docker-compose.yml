@@ -1,23 +1,16 @@
-# Set the version of docker compose to use
-
 version: '3.9'
-
-# The containers that compose the project
-
 services:
   db:
-    image: postgres:12.7
-
+    image: postgres:13
     restart: always
-
-    container_name: chika-server-test
-
     ports:
       - '5433:5432'
-
     environment:
       POSTGRES_USER: postgres
-
       POSTGRES_PASSWORD: postgres
-
-      POSTGRES_DB: chika_test
+      POSTGRES_DB: chikav2
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    ports:
+      - '6380:6379'

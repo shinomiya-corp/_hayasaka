@@ -36,13 +36,13 @@ export class UserResolver {
     throw new Error(`User with ID ${updateUserInput.id} does not exist.`);
   }
 
-  @Query(() => [User], { name: 'users' })
-  findAll() {
+  @Query(() => [User])
+  findUsers() {
     return this.userService.findAll();
   }
 
-  @Query(() => User, { name: 'user', nullable: true })
-  async findOne(@Args('id', { type: () => String }) id: string) {
+  @Query(() => User, { nullable: true })
+  async findOneUser(@Args('id', { type: () => String }) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -73,5 +73,5 @@ export class UserResolver {
     );
   }
 
-  // TODO top ribbons mutation
+  // TODO top ribbons mutation via sorting and filtering on findUsers
 }

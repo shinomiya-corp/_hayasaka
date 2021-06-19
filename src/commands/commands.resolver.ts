@@ -9,22 +9,19 @@ import { Command } from './entities/command.entity';
 export class CommandsResolver {
   constructor(private readonly commandsService: CommandsService) {}
 
-  @Query(() => [Command], { name: 'commands' })
-  findAll() {
+  @Query(() => [Command])
+  findCommands() {
     return this.commandsService.findAll();
   }
 
-  @Query(() => Command, { name: 'command' })
-  findOne(@Args('name', { type: () => String }) name: string) {
+  @Query(() => Command)
+  findOneCommand(@Args('name', { type: () => String }) name: string) {
     return this.commandsService.findOne(name);
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => [Command], {
-    name: 'createCommand',
-    description: 'Creates one to many commands.',
-  })
-  createCommand(
+  @Mutation(() => [Command], { description: 'Creates one to many commands.' })
+  createCommands(
     @Args('commands', { type: () => [CreateCommandInput] })
     createCommandInput: CreateCommandInput[],
   ) {
@@ -33,13 +30,13 @@ export class CommandsResolver {
 
   @UseGuards(SuperuserGuard)
   @Mutation(() => Int, { nullable: true })
-  dropCommands() {
+  dropAllCommands() {
     return this.commandsService.drop();
   }
 
   @UseGuards(SuperuserGuard)
-  @Mutation(() => Int, { nullable: true, name: 'seedCommands' })
-  dropAndSeed(
+  @Mutation(() => Int, { nullable: true })
+  seedCommands(
     @Args('commands', { type: () => [CreateCommandInput] })
     createCommandInput: CreateCommandInput[],
   ) {
