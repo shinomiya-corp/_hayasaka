@@ -8,20 +8,20 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "start": "dotenv -e .env.development -- nest start",
-    "start:dev": "yarn start --watch",
-    "start:debug": "yarn start --debug --watch",
+    "start": "nest start",
+    "start:dev": "dotenv -e .env.development -- yarn start --watch",
+    "start:debug": "dotenv -e .env.development -- yarn start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "prepare": "husky install",
     "docker:up": "docker-compose up -d && yarn db:push && yarn db:seed",
     "docker:down": "docker-compose down",
     "db:push": "dotenv -e .env.development -- npx prisma db push",
-    "db:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
     "db:seed": "dotenv -e .env.development -- npx prisma db seed --preview-feature",
+    "db:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
     "test": "dotenv -e .env.test -- jest -i --watch",
-    "test:e2e": "dotenv -e .env.test -- jest --watch -i --config ./jest-e2e.json"
+    "test:e2e": "dotenv -e .env.test -- jest --watch -i --config ./jest-e2e.json",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.15",
