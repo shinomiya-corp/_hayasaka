@@ -100,6 +100,8 @@ input IncrRibbonInput {
 }
 
 type Mutation {
+  addTrack(guildId: String!, url: String!): Ok!
+
   """Creates one to many commands."""
   createCommands(commands: [CreateCommandInput!]!): [Command!]!
   createGuild(createGuildInput: CreateGuildInput!): Guild!
@@ -116,6 +118,9 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
+"""Nothing of interest, but everything's alright."""
+scalar Ok
+
 type Query {
   findCommand(name: String!): Command!
   findCommands: [Command!]!
@@ -123,12 +128,20 @@ type Query {
   findGuilds: [Guild!]!
   findUser(id: String!): User
   findUsers(findUsersInput: FindUsersInput): [User!]!
+  getTracks(take: Int!): [TrackInfo!]!
 }
 
 """Option to sort response in descending or ascending order."""
 enum SortDirection {
   ASC
   DESC
+}
+
+type TrackInfo {
+  duration: String!
+  thumbnailUrl: String!
+  title: String!
+  url: String!
 }
 
 input UpdateGuildInput {

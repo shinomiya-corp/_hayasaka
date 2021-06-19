@@ -4,6 +4,7 @@ import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { CommandsModule } from './commands/commands.module';
 import { GuildModule } from './guild/guild.module';
+import { MusicModule } from './music/music.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     GuildModule,
     UserModule,
+    MusicModule,
   ],
 })
 export class AppModule {}
