@@ -37,7 +37,7 @@ describe('UserResolver', () => {
     });
 
     it('should return an error if user already exists', async () => {
-      jest.spyOn(mockUserService, 'create').mockResolvedValue(null);
+      jest.spyOn(mockUserService, 'create').mockRejectedValue(new Error());
       expect(() => resolver.createUser(saber)).rejects.toThrow();
     });
   });
@@ -50,50 +50,57 @@ describe('UserResolver', () => {
       expect(res).toEqual(newSaber);
     });
     it('should throw an error if the user does not exist', () => {
-      jest.spyOn(mockUserService, 'update').mockResolvedValue(null);
+      jest.spyOn(mockUserService, 'update').mockRejectedValue(new Error());
       expect(() =>
         resolver.updateUser({ id: 'does-not-exist', ribbons: 0 }),
       ).rejects.toThrow();
     });
     it('should throw an error if the ribbon count is negative', () => {
+      jest.spyOn(mockUserService, 'update').mockRejectedValue(new Error());
       expect(() =>
         resolver.updateUser({ id: saber.id, ribbons: -2000 }),
       ).rejects.toThrow();
     });
   });
 
-  describe('#findAll', () => {
+  describe('#findUsers', () => {
     it('should return all the users', async () => {
       jest
-        .spyOn(mockUserService, 'findAll')
+        .spyOn(mockUserService, 'findMany')
         .mockResolvedValue([saber, doraemon]);
       const res = await resolver.findUsers();
       expect(res).toEqual(expect.arrayContaining([saber, doraemon]));
     });
+
+    it('should return an empty array if there are no users', async () => {
+      jest.spyOn(mockUserService, 'findMany').mockResolvedValue([]);
+      const res = await resolver.findUsers();
+      expect(res).toEqual([]);
+    });
   });
 
-  describe('#findOne', () => {
+  describe('#findOneUser', () => {
     it('should return one user', async () => {
       jest.spyOn(mockUserService, 'findOne').mockResolvedValue(saber);
-      const res = await resolver.findOneUser(saber.id);
+      const res = await resolver.findUser(saber.id);
       expect(res).toEqual(saber);
     });
 
     it('should return null if service returns null', async () => {
       jest.spyOn(mockUserService, 'findOne').mockResolvedValue(null);
-      const res = await resolver.findOneUser(saber.id);
+      const res = await resolver.findUser(saber.id);
       expect(res).toBeNull();
     });
   });
 
-  describe('#delete', () => {
+  describe('#deleteUser', () => {
     it('should return the deleted user', async () => {
       jest.spyOn(mockUserService, 'delete').mockResolvedValue(saber);
       const res = await resolver.deleteUser(saber.id);
       expect(res).toEqual(saber);
     });
     it('should throw an error if the user does not exist', () => {
-      jest.spyOn(mockUserService, 'delete').mockResolvedValue(null);
+      jest.spyOn(mockUserService, 'delete').mockRejectedValue(new Error());
       expect(() => resolver.deleteUser('does-not-exist')).rejects.toThrow();
     });
   });
@@ -126,14 +133,14 @@ describe('UserResolver', () => {
     });
 
     it('should throw an error if decrement is invalid', async () => {
-      jest.spyOn(mockUserService, 'decrRibbon').mockResolvedValue(null);
+      jest.spyOn(mockUserService, 'decrRibbon').mockRejectedValue(new Error());
       expect(() =>
         resolver.decrRibbon({
           id: saber.id,
           tag: saber.tag,
           decrement: 1000,
         }),
-      ).rejects.toThrow(UserInputError);
+      ).rejects.toThrow();
     });
   });
 });

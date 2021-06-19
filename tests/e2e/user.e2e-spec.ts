@@ -14,12 +14,16 @@ import {
 import {
   findAllUserQuery,
   findAllUserQueryResult,
-} from './queries/user/findAllUserQuery';
+  findUsersRibbonsAscQuery,
+  findUsersRibbonsAscQueryResult,
+  findUsersRibbonsDescQuery,
+  findUsersRibbonsDescQueryResult,
+} from './queries/user/findUsersQuery';
 import {
   findOneNotExistUserQuery,
   findOneUserQuery,
   findOneUserQueryResult,
-} from './queries/user/findOneUserQuery';
+} from './queries/user/findUserQuery';
 import {
   deleteNotExistsUserMutation,
   deleteUserMutation,
@@ -35,6 +39,7 @@ import {
   decrRibbonMutation,
   decrRibbonMutationResult,
   decrRibbonNonUserMutation,
+  decrRibbonNonUserMutationResult,
 } from './queries/user/decrRibbonMutation';
 import {
   updateNotExistsUserMutation,
@@ -78,6 +83,7 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body).toEqual(createUserMutationResult);
         });
     });
+
     it('should return an error if user already exists', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -100,6 +106,7 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body).toEqual(updateUserMutationResult);
         });
     });
+
     it('should return error if user does not exist', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -110,6 +117,7 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body.errors).not.toBeNull();
         });
     });
+
     it('should return error if ribbons count is negative', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -122,7 +130,7 @@ describe('User Resolvers (e2e)', () => {
     });
   });
 
-  describe('#findAll', () => {
+  describe('#findUsers', () => {
     it('should return saber and doraemon', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -132,9 +140,38 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body).toEqual(findAllUserQueryResult);
         });
     });
+
+    it('should return an empty list if there are no users', async () => {
+      await prisma.user.deleteMany();
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: findAllUserQuery })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.findUsers).toEqual([]);
+        });
+    });
+
+    it('should be able to return ribbons in asc or desc order', async () => {
+      await request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: findUsersRibbonsAscQuery })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual(findUsersRibbonsAscQueryResult);
+        });
+
+      await request(app.getHttpServer())
+        .post('/graphql')
+        .send({ query: findUsersRibbonsDescQuery })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual(findUsersRibbonsDescQueryResult);
+        });
+    });
   });
 
-  describe('#findOne', () => {
+  describe('#findUser', () => {
     it('should return requested user', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -151,7 +188,7 @@ describe('User Resolvers (e2e)', () => {
         .send({ query: findOneNotExistUserQuery })
         .expect(200)
         .expect((res) => {
-          expect(res.body.data.user).toBeNull();
+          expect(res.body.data.findUser).toBeNull();
         });
     });
   });
@@ -166,6 +203,7 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body).toEqual(deleteUserMutationResult);
         });
     });
+
     it('should return an error if user to delete does not exist', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -210,14 +248,14 @@ describe('User Resolvers (e2e)', () => {
           expect(res.body).toEqual(decrRibbonMutationResult);
         });
     });
-    it('should return an error if user does not exist', () => {
+
+    it('should create the user with 0 ribbons if user does not exist', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({ query: decrRibbonNonUserMutation })
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toBeNull();
-          expect(res.body.errors).not.toBeNull();
+          expect(res.body).toEqual(decrRibbonNonUserMutationResult);
         });
     });
   });

@@ -1,6 +1,6 @@
 export const guildsQuery = `
-query guilds {
-  guilds {
+query findGuilds {
+  findGuilds {
     id
     customPrefix
 		disabledCommands {
@@ -13,7 +13,7 @@ query guilds {
 export const guildsQueryResult = JSON.parse(`
 {
   "data": {
-    "guilds": [
+    "findGuilds": [
       {
         "id": "a",
         "customPrefix": "!",

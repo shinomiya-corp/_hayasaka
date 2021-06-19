@@ -75,7 +75,7 @@ describe('Guild Resolvers (e2e)', () => {
     });
   });
 
-  describe('#guilds', () => {
+  describe('#findGuilds', () => {
     it('should return all the guilds', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -87,7 +87,7 @@ describe('Guild Resolvers (e2e)', () => {
     });
   });
 
-  describe('#guild', () => {
+  describe('#findGuild', () => {
     it('should return just one guild', () => {
       return request(app.getHttpServer())
         .post('/graphql')

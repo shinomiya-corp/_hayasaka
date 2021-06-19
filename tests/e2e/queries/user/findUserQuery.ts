@@ -1,6 +1,6 @@
 export const findOneUserQuery = `
-query findOne {
-  user(id: "1") {
+query findUser {
+  findUser(id: "1") {
     id
     tag
     ribbons
@@ -11,7 +11,7 @@ query findOne {
 export const findOneUserQueryResult = JSON.parse(`
 {
   "data": {
-    "user": {
+    "findUser": {
       "id": "1",
       "tag": "saber#1",
       "ribbons": 1
@@ -22,7 +22,7 @@ export const findOneUserQueryResult = JSON.parse(`
 
 export const findOneNotExistUserQuery = `
 query findOne {
-  user(id: "does-not-exist") {
+  findUser(id: "does-not-exist") {
     id
     tag
     ribbons

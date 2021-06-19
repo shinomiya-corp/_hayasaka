@@ -68,6 +68,20 @@ input DecrRibbonInput {
   tag: String!
 }
 
+enum FindUserSortFields {
+  ribbons
+}
+
+input FindUserSortOptions {
+  by: FindUserSortFields!
+  in: SortDirection!
+}
+
+input FindUsersInput {
+  sort: FindUserSortOptions
+  take: Int
+}
+
 type Guild {
   customPrefix: String
 
@@ -87,14 +101,14 @@ input IncrRibbonInput {
 
 type Mutation {
   """Creates one to many commands."""
-  createCommand(commands: [CreateCommandInput!]!): [Command!]!
+  createCommands(commands: [CreateCommandInput!]!): [Command!]!
   createGuild(createGuildInput: CreateGuildInput!): Guild!
   createUser(createUserInput: CreateUserInput!): User!
   decrRibbon(decrRibbonInput: DecrRibbonInput!): User!
   deleteGuild(id: String!): Guild!
   deleteUser(id: String!): User!
   disableCommands(commands: [String!]!, id: String!): Guild!
-  dropCommands: Int
+  dropAllCommands: Int
   enableCommands(commands: [String!]!, id: String!): Guild!
   incrRibbon(incrRibbonInput: IncrRibbonInput!): User!
   seedCommands(commands: [CreateCommandInput!]!): Int
@@ -103,12 +117,18 @@ type Mutation {
 }
 
 type Query {
-  command(name: String!): Command!
-  commands: [Command!]!
-  guild(id: String!): Guild!
-  guilds: [Guild!]!
-  user(id: String!): User
-  users: [User!]!
+  findCommand(name: String!): Command!
+  findCommands: [Command!]!
+  findGuild(id: String!): Guild!
+  findGuilds: [Guild!]!
+  findUser(id: String!): User
+  findUsers(findUsersInput: FindUsersInput): [User!]!
+}
+
+"""Option to sort response in descending or ascending order."""
+enum SortDirection {
+  ASC
+  DESC
 }
 
 input UpdateGuildInput {

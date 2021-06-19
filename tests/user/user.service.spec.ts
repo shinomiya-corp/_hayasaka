@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { SortDirection } from '../../src/common/entities/asc-or-desc.dto';
 import { PrismaService } from '../../src/database/prisma.service';
+import { FindUsersSortableFields } from '../../src/user/dto/find-users.input';
 import { UserService } from '../../src/user/user.service';
 import { resetDatabase } from '../common/resetDatabase';
 import { doraemon, saber } from '../common/users';
@@ -44,25 +46,40 @@ describe('UserService', () => {
       const _res = await prisma.user.findUnique({ where: { id: saber.id } });
       expect(_res).toEqual(newSaber);
     });
-    it('should return null if user to update does not exist', async () => {
-      const res = await service.update('does-not-exist', {
-        id: 'does-not-exist',
-        ribbons: 100,
-      });
-      expect(res).toBeNull();
+
+    it('should throw if user to update does not exist', async () => {
+      expect(() =>
+        service.update('does-not-exist', {
+          id: 'does-not-exist',
+          ribbons: 100,
+        }),
+      ).rejects.toThrow();
     });
   });
 
-  describe('#findAll', () => {
+  describe('#findMany', () => {
     it('should return all the fucking users', async () => {
-      const res = await service.findAll();
+      const res = await service.findMany();
       expect(res).toEqual(expect.arrayContaining([saber, doraemon]));
     });
 
     it('should return an empty list if no users are found', async () => {
       await prisma.user.deleteMany();
-      const res = await service.findAll();
+      const res = await service.findMany();
       expect(res).toEqual([]);
+    });
+
+    it('should return correctly in desc orders', async () => {
+      const res = await service.findMany({
+        take: 2,
+        sort: { by: FindUsersSortableFields.ribbons, in: SortDirection.DESC },
+      });
+      expect(res).toEqual([doraemon, saber]);
+    });
+
+    it('should return the correct number of requested elements', async () => {
+      const res = await service.findMany({ take: 1 });
+      expect(res).toHaveLength(1);
     });
   });
 
@@ -86,9 +103,8 @@ describe('UserService', () => {
       expect(_res).toBeNull();
     });
 
-    it('should return null if the user does not exist', async () => {
-      const res = await service.delete('does-not-exist');
-      expect(res).toBeNull();
+    it('should throw if the user does not exist', async () => {
+      expect(service.delete('does-not-exist')).rejects.toThrow();
     });
   });
 
@@ -134,18 +150,18 @@ describe('UserService', () => {
       expect(_res?.ribbons).toBe(0);
     });
 
-    it('should return null if decrement leads to negative and leave original value', async () => {
+    it('should return user with 0 ribbons if decrement amount exceeds original amount', async () => {
       const res = await service.decrRibbon({
         id: saber.id,
         tag: saber.tag,
         decrement: 2,
       });
-      expect(res).toBeNull();
+      expect(res).toEqual({ ...saber, ribbons: 0 });
       const _res = await prisma.user.findUnique({
         where: { id: saber.id },
         select: { ribbons: true },
       });
-      expect(_res?.ribbons).toBe(1);
+      expect(_res?.ribbons).toBe(0);
     });
   });
 });

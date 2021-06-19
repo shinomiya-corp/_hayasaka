@@ -15,7 +15,7 @@ export class CommandsResolver {
   }
 
   @Query(() => Command)
-  findOneCommand(@Args('name', { type: () => String }) name: string) {
+  findCommand(@Args('name', { type: () => String }) name: string) {
     return this.commandsService.findOne(name);
   }
 

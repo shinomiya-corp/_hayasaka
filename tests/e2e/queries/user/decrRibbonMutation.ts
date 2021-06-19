@@ -29,3 +29,15 @@ mutation decrRibbon {
   }
 }
 `;
+
+export const decrRibbonNonUserMutationResult = JSON.parse(`
+{
+  "data": {
+    "decrRibbon": {
+      "id": "3",
+      "tag": "pepe#3",
+      "ribbons": 0
+    }
+  }
+}
+`);

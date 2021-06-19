@@ -22,7 +22,7 @@ export class GuildResolver {
   }
 
   @Query(() => Guild)
-  findOneGuild(@Args('id', { type: () => String }) id: string) {
+  findGuild(@Args('id', { type: () => String }) id: string) {
     return this.guildService.findOne(id);
   }
 
